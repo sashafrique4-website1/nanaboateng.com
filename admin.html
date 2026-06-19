@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Nana Boateng Website</title>
+<style>
+:root{--gold:#D4AF37;--gold-light:#e8c84a;--obs:#0e0e0e;--mid:#1A1A1A;--soft:#252525;--card:#2a2a2a;--border:rgba(212,175,55,.22);--muted:rgba(255,255,255,.4);--white:#fff;--red:#e05252;--green:#4caf7d;--blue:#64b5f6;--sans:system-ui,-apple-system,sans-serif;--sw:260px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--obs);color:var(--white);font-family:var(--sans);font-size:14px;line-height:1.6;display:flex;overflow:hidden}
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--mid);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem}
+.sb-mark{width:36px;height:36px;border:1.5px solid var(--gold);display:grid;place-items:center;font-size:.7rem;font-weight:700;color:var(--gold);flex-shrink:0;font-family:Georgia,serif;border-radius:50%;overflow:hidden;position:relative}.sb-mark img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.sb-txt{font-size:.82rem;font-weight:600;line-height:1.2}
+.sb-txt small{display:block;font-size:.62rem;color:var(--muted);font-weight:400}
+.sb-sec{padding:.8rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.sb-lbl{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);padding:0 1.4rem;margin-bottom:.3rem;display:block}
+.ni{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.4rem;color:var(--muted);cursor:pointer;transition:color .2s,background .2s;font-size:.8rem;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent}
+.ni svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ni:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.ni.active{color:var(--gold);background:rgba(212,175,55,.08);border-left-color:var(--gold)}
+.sb-foot{margin-top:auto;padding:.8rem 1.4rem;border-top:1px solid var(--border)}
+.ss{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sd.unsaved{background:var(--gold);animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* MAIN */
+.main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{padding:.9rem 1.8rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--mid);flex-shrink:0;position:sticky;top:0;z-index:10}
+.pt{font-size:.95rem;font-weight:600}.ps{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.tba{display:flex;gap:.5rem;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .9rem;border:none;cursor:pointer;font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.05em;transition:opacity .2s,background .2s,color .2s}
+.btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bg{background:var(--gold);color:var(--obs)}.bg:hover{background:var(--gold-light)}
+.bo{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.15)}.bo:hover{border-color:var(--gold);color:var(--gold)}
+.bd{background:transparent;color:var(--red);border:1px solid rgba(224,82,82,.3)}.bd:hover{background:rgba(224,82,82,.1)}
+.btn-sm{padding:.28rem .6rem;font-size:.68rem}
+/* PANELS */
+.panel{display:none;padding:1.8rem;flex:1}
+.panel.active{display:block}
+/* CARDS */
+.sc{background:var(--mid);border:1px solid var(--border);padding:1.4rem;margin-bottom:1.4rem}
+.sc-t{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem;padding-bottom:.7rem;border-bottom:1px solid rgba(212,175,55,.15)}
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg1{grid-template-columns:1fr}
+.f{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.9rem}
+.f label{font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.f input,.f textarea,.f select{background:var(--soft);border:1px solid rgba(255,255,255,.1);color:var(--white);font-family:var(--sans);font-size:.84rem;padding:.6rem .85rem;outline:none;transition:border-color .2s;border-radius:0;appearance:none}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--gold)}
+.f input::placeholder,.f textarea::placeholder{color:rgba(255,255,255,.18)}
+.f textarea{resize:vertical;min-height:80px}
+.f select option{background:var(--mid)}
+.f-hint{font-size:.67rem;color:var(--muted);margin-top:.2rem}
+/* IMAGE UPLOAD */
+.img-upload{position:relative}
+.img-upload-area{border:2px dashed rgba(212,175,55,.3);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s;display:flex;flex-direction:column;align-items:center;gap:.8rem;position:relative;overflow:hidden}
+.img-upload-area:hover{border-color:var(--gold)}
+.img-upload-area svg{width:36px;height:36px;stroke:rgba(212,175,55,.4);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.img-upload-area p{font-size:.76rem;color:var(--muted)}
+.img-upload-area small{font-size:.65rem;color:rgba(255,255,255,.2)}
+.img-preview{position:relative;display:inline-block}
+.img-preview img{max-width:100%;max-height:220px;display:block;object-fit:cover}
+.img-preview-rm{position:absolute;top:.4rem;right:.4rem;background:var(--red);border:none;color:var(--white);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.9rem;display:grid;place-items:center}
+.img-upload input[type=file],.img-upload-area input[type=file],.gal-add-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+/* GALLERY GRID */
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:1rem}
+.gal-thumb{position:relative;aspect-ratio:1;overflow:hidden;background:var(--soft);border:1px solid rgba(255,255,255,.08)}
+.gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.gal-thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;opacity:0;transition:opacity .2s}
+.gal-thumb:hover .gal-thumb-overlay{opacity:1}
+.gal-thumb-cat{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.gal-thumb-cap{font-size:.65rem;color:rgba(255,255,255,.8);text-align:center;padding:0 .4rem}
+.gal-thumb-rm{background:var(--red);border:none;color:var(--white);padding:.2rem .5rem;font-size:.65rem;cursor:pointer;border-radius:2px}
+.gal-add-btn{aspect-ratio:1;border:2px dashed rgba(212,175,55,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;background:none;color:var(--muted);font-size:.7rem;transition:border-color .2s,color .2s;position:relative}
+.gal-add-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.5}
+.gal-add-btn:hover{border-color:var(--gold);color:var(--gold)}
+/* LIST ITEMS */
+.ir{background:var(--soft);border:1px solid rgba(255,255,255,.06);padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;transition:border-color .2s;margin-bottom:1px}
+.ir:hover{border-color:var(--border)}
+.ir-l{flex:1;min-width:0}
+.ir-t{font-weight:500;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ir-m{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.ir-a{display:flex;gap:.35rem;flex-shrink:0;align-items:center}
+.badge{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .5rem;border:1px solid;white-space:nowrap}
+.b-active{color:var(--green);border-color:var(--green)}
+.b-building{color:var(--gold);border-color:var(--gold)}
+.b-planned{color:var(--muted);border-color:rgba(255,255,255,.2)}
+.b-past{color:var(--muted);border-color:rgba(255,255,255,.2)}
+.b-upcoming{color:var(--blue);border-color:var(--blue)}
+/* PROGRESS */
+.pr{display:flex;align-items:center;gap:.8rem;margin-top:.5rem}
+.pr-bar{flex:1;height:4px;background:rgba(255,255,255,.08)}
+.pr-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .3s}
+.pr-num{font-size:.8rem;color:var(--gold);width:34px;text-align:right;flex-shrink:0}
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.mo.open{display:flex}
+.md{background:var(--mid);border:1px solid var(--border);width:100%;max-width:660px;flex-shrink:0}
+.mh{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh-t{font-size:.88rem;font-weight:600}
+.mc{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:.2rem .4rem;transition:color .2s}
+.mc:hover{color:var(--white)}
+.mb{padding:1.4rem}
+.mf{padding:.9rem 1.4rem;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end}
+/* TOAST */
+.tw{position:fixed;bottom:1.2rem;right:1.2rem;display:flex;flex-direction:column;gap:.4rem;z-index:9999;pointer-events:none}
+.toast{background:var(--soft);border:1px solid var(--border);padding:.6rem 1rem;font-size:.76rem;display:flex;align-items:center;gap:.45rem;animation:tIn .3s ease,tOut .35s ease 2.65s forwards}
+.toast.s{border-color:var(--green)}.toast.s::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.toast.e{border-color:var(--red)}.toast.e::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+@keyframes tIn{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes tOut{from{opacity:1}to{opacity:0}}
+/* SECTION TABS */
+.stabs{display:flex;gap:4px;margin-bottom:1.4rem;flex-wrap:wrap}
+.stab{padding:.4rem .9rem;background:var(--soft);border:1px solid rgba(255,255,255,.08);color:var(--muted);cursor:pointer;font-size:.72rem;font-family:var(--sans);transition:border-color .2s,color .2s}
+.stab.active{border-color:var(--gold);color:var(--gold)}
+/* PREVIEW LINK */
+.preview-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--gold);text-decoration:none;margin-top:.5rem}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-mark" id="adminLogoMark">NB</div>
+    <div class="sb-txt">Nana Boateng <small>Site Admin</small></div>
+  </div>
+  <div class="sb-sec">
+    <span class="sb-lbl">Content</span>
+    <button class="ni active" onclick="show('hero')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4"/></svg>Hero &amp; Portrait</button>
+    <button class="ni" onclick="show('mission')"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Mission</button>
+    <button class="ni" onclick="show('whatcards')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>What I Do</button>
+    <button class="ni" onclick="show('speaking')"><svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>Speaking</button>
+    <button class="ni" onclick="show('impact')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>Impact Projects</button>
+    <button class="ni" onclick="show('ventures')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Ventures</button>
+    <button class="ni" onclick="show('groupe')"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Naboat Groupe</button>
+    <button class="ni" onclick="show('gallery')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Gallery</button>
+    <button class="ni" onclick="show('blog')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Blog Posts</button>
+  </div>
+  <div class="sb-sec">
+    <span class="sb-lbl">Settings</span>
+    <button class="ni" onclick="show('buttons')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>All Buttons &amp; CTAs</button>
+    <button class="ni" onclick="show('social')"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Social Links</button>
+    <button class="ni" onclick="show('contact')"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact &amp; Footer</button>
+    <button class="ni" onclick="show('seo')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO / Meta</button>
+    <button class="ni" onclick="show('export')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save &amp; Export</button>
+  </div>
+  <div class="sb-foot"><div class="ss"><div class="sd" id="sdot"></div><span id="slbl">All changes saved</span></div></div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div><div class="pt" id="ptitle">Hero &amp; Portrait</div><div class="ps" id="psub">Upload your portrait photo and edit hero text</div></div>
+    <div class="tba">
+      <button class="btn bo" onclick="resetPanel()"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>Reset</button>
+      <button class="btn bg" onclick="saveAll()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13"/><polyline points="7 3 7 8 15 8"/></svg>Save All</button>
+    </div>
+  </div>
+
+  <!-- HERO & PORTRAIT -->
+  <div class="panel active" id="panel-hero">
+    <div class="sc"><div class="sc-t">Portrait Photo (Hero Section)</div>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:1rem;">This photo appears on the right side of your homepage. Upload a professional portrait — minimum 900×1200px, portrait orientation recommended.</p>
+      <div class="img-upload">
+        <div id="portraitPreview"></div>
+        <div class="img-upload-area" id="portraitUploadArea" style="margin-top:0">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Click to upload portrait photo</p>
+          <small>JPG, PNG, WEBP — max 5MB</small>
+          <input type="file" accept="image/*" onchange="uploadPortrait(this)" />
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Profile Logo (Nav &amp; Sidebar)</div>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:1rem;">This replaces the <strong>NB</strong> monogram in the navigation bar and footer with your profile picture — circular, just like your social media avatar. Use the same photo you use on LinkedIn and Instagram.</p>
+      <div class="img-upload">
+        <div id="logoPreview"></div>
+        <div class="img-upload-area" id="logoUploadArea" style="margin-top:0">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <p>Click to upload profile photo</p>
+          <small>Same image as your LinkedIn / Instagram avatar</small>
+          <input type="file" accept="image/*" onchange="uploadLogo(this)" />
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Hero Badge (top of photo)</div>
+      <div class="fg">
+        <div class="f"><label>Badge Number</label><input type="text" id="badge_num" placeholder="54" /></div>
+        <div class="f"><label>Badge Label</label><input type="text" id="badge_label" placeholder="Nation Vision" /></div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Hero Text</div>
+      <div class="f"><label>Name (shown in nav &amp; footer)</label><input type="text" id="hero_name" placeholder="Nana Boateng" /></div>
+      <div class="f"><label>Eyebrow (small text above headline)</label><input type="text" id="hero_eyebrow" placeholder="Pan-African Entrepreneur · Accra, Ghana" /></div>
+      <div class="f"><label>Sub-headline paragraph</label><textarea id="hero_sub" rows="3"></textarea></div>
+      <div class="sc-t" style="margin-top:.5rem;">Role Pills</div>
+      <div class="fg">
+        <div class="f"><label>Role 1</label><input type="text" id="role1" placeholder="Entrepreneur" /></div>
+        <div class="f"><label>Role 2</label><input type="text" id="role2" placeholder="Growth Leader" /></div>
+        <div class="f"><label>Role 3</label><input type="text" id="role3" placeholder="Speaker" /></div>
+      </div>
+      <div class="sc-t" style="margin-top:.5rem;">Stats Row</div>
+      <div class="fg">
+        <div class="f"><label>Stat 1 Number</label><input type="text" id="stat1_num" placeholder="10K+" /></div>
+        <div class="f"><label>Stat 1 Label</label><input type="text" id="stat1_label" placeholder="Achievers Celebrated" /></div>
+        <div class="f"><label>Stat 2 Number</label><input type="text" id="stat2_num" placeholder="54" /></div>
+        <div class="f"><label>Stat 2 Label</label><input type="text" id="stat2_label" placeholder="Nations in Vision" /></div>
+        <div class="f"><label>Stat 3 Number</label><input type="text" id="stat3_num" placeholder="2022" /></div>
+        <div class="f"><label>Stat 3 Label</label><input type="text" id="stat3_label" placeholder="Sash Afrique Founded" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSION -->
+  <div class="panel" id="panel-mission">
+    <div class="sc"><div class="sc-t">Mission Section</div>
+      <div class="f"><label>Section Label (small gold text)</label><input type="text" id="mission_label" placeholder="Why I Do This" /></div>
+      <div class="f"><label>Section Headline</label><textarea id="mission_headline" rows="2"></textarea></div>
+      <div class="f"><label>Body Paragraph 1</label><textarea id="mission_p1" rows="4"></textarea></div>
+      <div class="f"><label>Body Paragraph 2</label><textarea id="mission_p2" rows="4"></textarea></div>
+      <div class="f"><label>Pull Quote</label><textarea id="mission_quote" rows="3"></textarea></div>
+      <div class="f"><label>Quote Attribution</label><input type="text" id="mission_quote_attr" placeholder="— Nana Boateng, Founder · Sash Afrique Ltd" /></div>
+    </div>
+    <div class="sc"><div class="sc-t">Mission Values (4 items)</div>
+      <div class="fg"><div class="f"><label>Value 1 Title</label><input type="text" id="mv1_title" /></div><div class="f"><label>Value 1 Sub-text</label><input type="text" id="mv1_sub" /></div></div>
+      <div class="fg"><div class="f"><label>Value 2 Title</label><input type="text" id="mv2_title" /></div><div class="f"><label>Value 2 Sub-text</label><input type="text" id="mv2_sub" /></div></div>
+      <div class="fg"><div class="f"><label>Value 3 Title</label><input type="text" id="mv3_title" /></div><div class="f"><label>Value 3 Sub-text</label><input type="text" id="mv3_sub" /></div></div>
+      <div class="fg"><div class="f"><label>Value 4 Title</label><input type="text" id="mv4_title" /></div><div class="f"><label>Value 4 Sub-text</label><input type="text" id="mv4_sub" /></div></div>
+    </div>
+    <div class="sc"><div class="sc-t">Mission Stats (3 numbers)</div>
+      <div class="fg">
+        <div class="f"><label>Stat 1 Number</label><input type="text" id="ms_stat1" placeholder="10K+" /></div><div class="f"><label>Stat 1 Label</label><input type="text" id="ms_stat1_label" placeholder="Achievers Celebrated" /></div>
+        <div class="f"><label>Stat 2 Number</label><input type="text" id="ms_stat2" placeholder="4K+" /></div><div class="f"><label>Stat 2 Label</label><input type="text" id="ms_stat2_label" placeholder="Lives Impacted" /></div>
+        <div class="f"><label>Stat 3 Number</label><input type="text" id="ms_stat3" placeholder="54" /></div><div class="f"><label>Stat 3 Label</label><input type="text" id="ms_stat3_label" placeholder="Nations in Vision" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT I DO -->
+  <div class="panel" id="panel-whatcards">
+    <div class="sc"><div class="sc-t">What I Do — 3 Cards</div>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:1rem;">These are the three cards shown under "What I Do" on the homepage.</p>
+      <div class="f"><label>Card 1 Title</label><input type="text" id="wc1_title" placeholder="Entrepreneur" /></div>
+      <div class="f"><label>Card 1 Body</label><textarea id="wc1_body" rows="3"></textarea></div>
+      <hr style="border-color:rgba(255,255,255,.06);margin:.8rem 0"/>
+      <div class="f"><label>Card 2 Title</label><input type="text" id="wc2_title" placeholder="Growth Leader" /></div>
+      <div class="f"><label>Card 2 Body</label><textarea id="wc2_body" rows="3"></textarea></div>
+      <hr style="border-color:rgba(255,255,255,.06);margin:.8rem 0"/>
+      <div class="f"><label>Card 3 Title</label><input type="text" id="wc3_title" placeholder="Speaker" /></div>
+      <div class="f"><label>Card 3 Body</label><textarea id="wc3_body" rows="3"></textarea></div>
+    </div>
+  </div>
+
+  <!-- SPEAKING -->
+  <div class="panel" id="panel-speaking">
+    <div class="sc"><div class="sc-t">Section Text</div>
+      <div class="fg"><div class="f"><label>Headline</label><input type="text" id="speaking_headline" /></div></div>
+      <div class="f"><label>Intro paragraph</label><textarea id="speaking_intro" rows="2"></textarea></div>
+      <div class="f"><label>CTA Box Headline</label><input type="text" id="speaking_cta_headline" /></div>
+      <div class="f"><label>CTA Box Body</label><textarea id="speaking_cta_body" rows="2"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Speaking Topics (one per line)</div>
+      <div class="f"><textarea id="speaking_topics" rows="8"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Speaking Events <button class="btn bg" style="margin-left:.8rem" onclick="openMo('speaking')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Event</button></div>
+      <div id="speakingList"></div>
+    </div>
+  </div>
+
+  <!-- IMPACT -->
+  <div class="panel" id="panel-impact">
+    <div class="sc"><div class="sc-t">Section Labels</div>
+      <div class="fg"><div class="f"><label>Section Label</label><input type="text" id="impact_label" placeholder="Impact &amp; Leadership" /></div></div>
+      <div class="f"><label>Section Headline</label><input type="text" id="impact_headline" /></div>
+      <div class="f"><label>Section Intro</label><textarea id="impact_intro" rows="2"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Impact Project Cards <button class="btn bg" style="margin-left:.8rem" onclick="openMo('impact')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Project</button></div>
+      <div id="impactList"></div>
+    </div>
+  </div>
+
+  <!-- VENTURES -->
+  <div class="panel" id="panel-ventures">
+    <div class="sc"><div class="sc-t">Section Text</div>
+      <div class="f"><label>Headline</label><input type="text" id="ventures_headline" /></div>
+      <div class="f"><label>Sub-text</label><textarea id="ventures_subtitle" rows="2"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Ventures <button class="btn bg" style="margin-left:.8rem" onclick="openMo('venture')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Venture</button></div>
+      <div id="venturesList"></div>
+    </div>
+  </div>
+
+  <!-- NABOAT GROUPE -->
+  <div class="panel" id="panel-groupe">
+    <div class="sc"><div class="sc-t">Naboat Groupe Vision</div>
+      <div class="f"><label>Headline</label><input type="text" id="groupe_headline" /></div>
+      <div class="f"><label>Body Paragraph 1</label><textarea id="groupe_p1" rows="4"></textarea></div>
+      <div class="f"><label>Body Paragraph 2</label><textarea id="groupe_p2" rows="4"></textarea></div>
+      <div class="f"><label>Industry Pills (one per line)</label><textarea id="groupe_industries" rows="8"></textarea><p class="f-hint">Each line becomes one pill on the website.</p></div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="panel" id="panel-gallery">
+    <div class="sc"><div class="sc-t">Gallery Section Text</div>
+      <div class="fg"><div class="f"><label>Section Label</label><input type="text" id="gallery_label" placeholder="Professional Gallery" /></div></div>
+      <div class="fg"><div class="f"><label>Headline</label><input type="text" id="gallery_headline" placeholder="Moments in Motion" /></div></div>
+      <div class="f"><label>Intro paragraph</label><textarea id="gallery_intro" rows="2"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Upload Professional Photos</div>
+      <p style="font-size:.75rem;color:var(--muted);margin-bottom:1rem;">Upload multiple photos at once. Each photo is stored in your browser and embedded in the website. Click a photo to remove it.</p>
+      <div class="gal-grid" id="galGrid">
+        <button class="gal-add-btn">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Add Photos
+          <input type="file" accept="image/*" multiple onchange="uploadGalleryPhotos(this)" />
+        </button>
+      </div>
+      <p style="font-size:.68rem;color:rgba(255,255,255,.2);margin-top:1rem;">Google crawls gallery images for search visibility. Add descriptive captions for best SEO results.</p>
+    </div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="panel" id="panel-blog">
+    <div class="sc"><div class="sc-t">Blog Posts <button class="btn bg" style="margin-left:.8rem" onclick="openMo('blog')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Write Post</button></div>
+      <div id="blogList"></div>
+    </div>
+  </div>
+
+  <!-- BUTTONS & CTAs -->
+  <div class="panel" id="panel-buttons">
+    <div class="sc"><div class="sc-t">Navigation &amp; Hero Buttons</div>
+      <div class="fg">
+        <div class="f"><label>Nav CTA Button (top right)</label><input type="text" id="nav_cta" placeholder="Book Nana" /></div>
+        <div class="f"><label>Hero Primary Button</label><input type="text" id="cta_primary" placeholder="Book Nana to Speak" /></div>
+        <div class="f"><label>Hero Secondary Button</label><input type="text" id="cta_secondary" placeholder="Explore My Journey" /></div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Speaking Section Button</div>
+      <div class="f"><label>Speaking CTA Button Text</label><input type="text" id="speaking_cta_btn" placeholder="Send a Speaking Inquiry" /></div>
+    </div>
+    <div class="sc"><div class="sc-t">Naboat Groupe Button</div>
+      <div class="f"><label>Groupe CTA Button Text</label><input type="text" id="groupe_cta" placeholder="Read the Long-Term Vision" /></div>
+    </div>
+    <div class="sc"><div class="sc-t">Contact Form</div>
+      <div class="fg">
+        <div class="f"><label>Form Message Field Label</label><input type="text" id="form_msg_label" placeholder="Tell Nana More" /></div>
+        <div class="f"><label>Form Submit Button Text</label><input type="text" id="form_submit_btn" placeholder="Send Inquiry" /></div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Section Headlines (editable)</div>
+      <div class="fg">
+        <div class="f"><label>Tracker Section Headline</label><input type="text" id="tracker_headline" /></div>
+        <div class="f"><label>Social Section Headline</label><input type="text" id="social_headline" /></div>
+        <div class="f"><label>Contact Section Headline</label><input type="text" id="contact_headline" /></div>
+        <div class="f"><label>Contact Section Intro</label><textarea id="contact_intro" rows="2"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL -->
+  <div class="panel" id="panel-social">
+    <div class="sc"><div class="sc-t">Social Media URLs</div>
+      <div class="fg">
+        <div class="f"><label>LinkedIn URL</label><input type="url" id="social_linkedin" /></div>
+        <div class="f"><label>Instagram URL</label><input type="url" id="social_instagram" /></div>
+        <div class="f"><label>Facebook URL</label><input type="url" id="social_facebook" /></div>
+        <div class="f"><label>Twitter / X URL</label><input type="url" id="social_twitter" /></div>
+        <div class="f"><label>YouTube URL</label><input type="url" id="social_youtube" /></div>
+        <div class="f"><label>WhatsApp Number</label><input type="text" id="social_whatsapp" placeholder="+233XXXXXXXXX" /></div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Social Section Text</div>
+      <div class="f"><label>Headline</label><input type="text" id="social_section_headline" /></div>
+      <div class="f"><label>Intro</label><textarea id="social_section_intro" rows="2"></textarea></div>
+    </div>
+  </div>
+
+  <!-- CONTACT & FOOTER -->
+  <div class="panel" id="panel-contact">
+    <div class="sc"><div class="sc-t">Contact Information</div>
+      <div class="fg">
+        <div class="f"><label>Email</label><input type="email" id="contact_email" /></div>
+        <div class="f"><label>Phone / WhatsApp (displayed)</label><input type="text" id="contact_phone" /></div>
+      </div>
+      <div class="f"><label>Location</label><input type="text" id="contact_location" /></div>
+      <div class="f"><label>Services List (one per line — also populates form dropdown)</label><textarea id="contact_services" rows="7"></textarea></div>
+    </div>
+    <div class="sc"><div class="sc-t">Footer</div>
+      <div class="f"><label>Footer Tagline</label><textarea id="footer_tagline" rows="2"></textarea></div>
+      <div class="f"><label>Footer Copyright Line</label><input type="text" id="footer_copy" /></div>
+    </div>
+    <div class="sc"><div class="sc-t">Tracker &amp; Pulse Text</div>
+      <div class="f"><label>Tracker Description</label><textarea id="tracker_desc" rows="2"></textarea></div>
+      <div class="f"><label>Pulse Text (bottom of map)</label><textarea id="tracker_pulse" rows="2"></textarea></div>
+    </div>
+  </div>
+
+  <!-- SEO -->
+  <div class="panel" id="panel-seo">
+    <div class="sc"><div class="sc-t">SEO / Meta Tags</div>
+      <p style="font-size:.75rem;color:var(--muted);margin-bottom:1rem;">These control how your website appears in Google search results and when shared on social media.</p>
+      <div class="f"><label>Page Title (shown in browser tab &amp; Google)</label><input type="text" id="seo_title" placeholder="Nana Boateng — Entrepreneur. Growth Leader. Speaker." /></div>
+      <div class="f"><label>Meta Description (shown in Google results — keep under 160 characters)</label><textarea id="seo_desc" rows="3"></textarea><p class="f-hint" id="seoDescCount">0 / 160 characters</p></div>
+    </div>
+    <div class="sc"><div class="sc-t">Gallery SEO Note</div>
+      <p style="font-size:.76rem;color:var(--muted);line-height:1.8;">Your gallery images are embedded directly in the HTML. Google will crawl and index them automatically. To maximise visibility:<br>• Use descriptive captions (e.g. "Nana Boateng speaking at UPSA Entrepreneurship Summit 2025")<br>• Upload high-quality JPG/WEBP images<br>• Add alt text via the caption field when uploading</p>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="panel" id="panel-export">
+    <div class="sc"><div class="sc-t">Save &amp; Apply</div>
+      <p style="font-size:.75rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.8;">Your changes are auto-saved in this browser. The website reads this data automatically when you open <strong>index.html</strong> in the same browser. To deploy to GitHub, export the data and paste it into the site's JSON file.</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem">
+        <button class="btn bg" onclick="exportJSON()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Content JSON</button>
+        <button class="btn bo" onclick="copyJSON()"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy JSON to Clipboard</button>
+        <button class="btn bo" onclick="importJSON()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import JSON (restore backup)</button>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-t">Data Preview</div>
+      <textarea id="jsonPreview" rows="18" style="background:var(--obs);border:1px solid var(--border);color:rgba(255,255,255,.55);font-family:monospace;font-size:.7rem;padding:1rem;width:100%;resize:vertical;" readonly></textarea>
+    </div>
+  </div>
+</main>
+
+<!-- MODALS -->
+<!-- Speaking -->
+<div class="mo" id="mo-speaking">
+  <div class="md">
+    <div class="mh"><span class="mh-t" id="se-mt">Add Speaking Event</span><button class="mc" onclick="closeMo('speaking')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="se-id"/>
+      <div class="fg"><div class="f"><label>Event Title</label><input type="text" id="se-title" /></div><div class="f"><label>Organiser</label><input type="text" id="se-org" /></div></div>
+      <div class="f"><label>Topic / Theme</label><input type="text" id="se-topic" /></div>
+      <div class="fg"><div class="f"><label>Date</label><input type="date" id="se-date" /></div><div class="f"><label>Location</label><input type="text" id="se-loc" /></div></div>
+      <div class="f"><label>Status</label><select id="se-status"><option value="past">Past</option><option value="upcoming">Upcoming</option></select></div>
+      <div class="f"><label>Event Photo (optional)</label>
+        <div class="img-upload" style="position:relative">
+          <div id="se-img-preview"></div>
+          <div class="img-upload-area" style="padding:1rem">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="font-size:.72rem">Click to upload event photo</p>
+            <input type="file" accept="image/*" onchange="uploadModalImg(this,'se-img-preview','se-img-data')" />
+          </div>
+          <input type="hidden" id="se-img-data" />
+        </div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="closeMo('speaking')">Cancel</button><button class="btn bg" onclick="saveSpeaking()">Save Event</button></div>
+  </div>
+</div>
+
+<!-- Impact -->
+<div class="mo" id="mo-impact">
+  <div class="md">
+    <div class="mh"><span class="mh-t" id="im-mt">Add Impact Project</span><button class="mc" onclick="closeMo('impact')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="im-id"/>
+      <div class="fg"><div class="f"><label>Project Name</label><input type="text" id="im-title" /></div><div class="f"><label>Category Label</label><input type="text" id="im-label" placeholder="Flagship / Initiative / Coming Soon" /></div></div>
+      <div class="f"><label>Description</label><textarea id="im-desc" rows="3"></textarea></div>
+      <div class="fg"><div class="f"><label>Metric Number</label><input type="text" id="im-mnum" placeholder="10K+" /></div><div class="f"><label>Metric Label</label><input type="text" id="im-mlbl" placeholder="Units Sold" /></div></div>
+      <div class="f"><label>Link Text</label><input type="text" id="im-link" placeholder="Learn More" /></div>
+      <div class="f"><label>Project Image (optional)</label>
+        <div class="img-upload" style="position:relative">
+          <div id="im-img-preview"></div>
+          <div class="img-upload-area" style="padding:1rem">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="font-size:.72rem">Click to upload image</p>
+            <input type="file" accept="image/*" onchange="uploadModalImg(this,'im-img-preview','im-img-data')" />
+          </div>
+          <input type="hidden" id="im-img-data" />
+        </div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="closeMo('impact')">Cancel</button><button class="btn bg" onclick="saveImpact()">Save Project</button></div>
+  </div>
+</div>
+
+<!-- Venture -->
+<div class="mo" id="mo-venture">
+  <div class="md">
+    <div class="mh"><span class="mh-t" id="v-mt">Add Venture</span><button class="mc" onclick="closeMo('venture')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="v-id"/>
+      <div class="fg"><div class="f"><label>Venture Name</label><input type="text" id="v-name" /></div><div class="f"><label>Status</label><select id="v-status"><option value="active">Active</option><option value="building">Building</option><option value="planned">Planned</option></select></div></div>
+      <div class="f"><label>Description</label><textarea id="v-desc" rows="3"></textarea></div>
+      <div class="f"><label>Progress: <span id="v-pct-show">50</span>%</label><input type="range" id="v-progress" min="0" max="100" step="5" value="50" oninput="document.getElementById('v-pct-show').textContent=this.value;document.getElementById('v-pr-fill').style.width=this.value+'%'" style="width:100%;accent-color:var(--gold);margin:.4rem 0"/><div class="pr"><div class="pr-bar"><div class="pr-fill" id="v-pr-fill" style="width:50%"></div></div><span class="pr-num" id="v-pr-num">50%</span></div></div>
+      <div class="f"><label>Launch Timeline</label><input type="text" id="v-launch" placeholder="Founded 2022 · Operating in Ghana" /></div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="closeMo('venture')">Cancel</button><button class="btn bg" onclick="saveVenture()">Save Venture</button></div>
+  </div>
+</div>
+
+<!-- Blog -->
+<div class="mo" id="mo-blog">
+  <div class="md">
+    <div class="mh"><span class="mh-t" id="bl-mt">Add Blog Post</span><button class="mc" onclick="closeMo('blog')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="bl-id"/>
+      <div class="f"><label>Post Title</label><input type="text" id="bl-title" /></div>
+      <div class="fg"><div class="f"><label>Category</label><select id="bl-cat"><option>Entrepreneurship</option><option>Leadership</option><option>Growth</option><option>African Business</option><option>Youth Development</option><option>Sales</option></select></div><div class="f"><label>Date</label><input type="date" id="bl-date" /></div></div>
+      <div class="f"><label>Excerpt</label><textarea id="bl-excerpt" rows="2"></textarea></div>
+      <div class="f"><label>Body</label><textarea id="bl-body" rows="8"></textarea></div>
+      <div class="f"><label>Featured?</label><select id="bl-featured"><option value="false">No</option><option value="true">Yes</option></select></div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="closeMo('blog')">Cancel</button><button class="btn bg" onclick="saveBlog()">Save Post</button></div>
+  </div>
+</div>
+
+<!-- Gallery Caption Modal -->
+<div class="mo" id="mo-gal-cap">
+  <div class="md" style="max-width:420px">
+    <div class="mh"><span class="mh-t">Edit Photo Details</span><button class="mc" onclick="closeMo('gal-cap')">&times;</button></div>
+    <div class="mb">
+      <input type="hidden" id="gc-idx"/>
+      <div style="margin-bottom:1rem"><img id="gc-thumb" style="max-height:160px;object-fit:cover;width:100%" /></div>
+      <div class="f"><label>Caption / Alt Text</label><input type="text" id="gc-cap" placeholder="Nana Boateng speaking at UPSA Summit 2025" /></div>
+      <div class="f"><label>Category</label><select id="gc-cat"><option>Speaking</option><option>Portraits</option><option>Events</option><option>Leadership</option></select></div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="closeMo('gal-cap')">Cancel</button><button class="btn bg" onclick="saveGalCap()">Save</button></div>
+  </div>
+</div>
+
+<div class="tw" id="tw"></div>
+
+<script>
+'use strict';
+const SK='nb_admin_v1';
+let D={};
+
+const PM={
+  hero:{t:'Hero & Portrait',s:'Upload your portrait photo and edit hero text'},
+  mission:{t:'Mission',s:'Edit mission headline, body, values and stats'},
+  whatcards:{t:'What I Do',s:'Edit the three role cards'},
+  speaking:{t:'Speaking',s:'Manage speaking events and topics'},
+  impact:{t:'Impact Projects',s:'Add and manage impact project cards'},
+  ventures:{t:'Ventures',s:'Add and manage ventures with progress bars'},
+  groupe:{t:'Naboat Groupe',s:'Edit the long-term vision section'},
+  gallery:{t:'Gallery',s:'Upload professional photos for Google to crawl'},
+  blog:{t:'Blog Posts',s:'Write and manage blog content'},
+  buttons:{t:'All Buttons & CTAs',s:'Edit every button text on the website'},
+  social:{t:'Social Links',s:'Update your social media URLs'},
+  contact:{t:'Contact & Footer',s:'Update contact info and footer text'},
+  seo:{t:'SEO / Meta',s:'Edit page title and meta description for Google'},
+  export:{t:'Save & Export',s:'Download content or import a backup'}
+};
+
+function show(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const p=document.getElementById('panel-'+id);
+  if(p)p.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');});
+  const m=PM[id]||{t:id,s:''};
+  document.getElementById('ptitle').textContent=m.t;
+  document.getElementById('psub').textContent=m.s;
+  if(id==='export')updatePreview();
+}
+
+// ── LOAD / SAVE ──────────────────────────────────────────────────────────────
+function load(){
+  try{const s=localStorage.getItem(SK);if(s)D=JSON.parse(s);}catch(e){}
+  fillFields();
+  renderAll();
+}
+function saveAll(){
+  collectFields();
+  try{localStorage.setItem(SK,JSON.stringify(D));markSaved();toast('All changes saved','s');}catch(e){toast('Save failed — storage may be full','e');}
+}
+let ut;
+function markUnsaved(){document.getElementById('sdot').classList.add('unsaved');document.getElementById('slbl').textContent='Unsaved changes';clearTimeout(ut);ut=setTimeout(saveAll,3000);}
+function markSaved(){document.getElementById('sdot').classList.remove('unsaved');document.getElementById('slbl').textContent='All changes saved';}
+
+// ── FIELDS ───────────────────────────────────────────────────────────────────
+function g(id){const e=document.getElementById(id);return e?e.value:'';}
+function s(id,v){const e=document.getElementById(id);if(e)e.value=v||'';}
+
+function fillFields(){
+  const h=D.hero||{},m=D.mission||{},g2=D.groupe||{},so=D.social||{},c=D.contact||{},f=D.footer||{},se=D.seo||{};
+  const sp=D.speaking||{},imp=D.impact||{},v=D.ventures||{},w=D.whatCards||[],ss=D.social_section||{},cs=D.contact_section||{},tr=D.tracker||{};
+  // hero
+  s('hero_name',h.name);s('hero_eyebrow',h.eyebrow);s('hero_sub',h.sub);s('role1',h.role1);s('role2',h.role2);s('role3',h.role3);
+  s('stat1_num',h.stat1_num);s('stat1_label',h.stat1_label);s('stat2_num',h.stat2_num);s('stat2_label',h.stat2_label);s('stat3_num',h.stat3_num);s('stat3_label',h.stat3_label);
+  s('badge_num',h.badge_num);s('badge_label',h.badge_label);
+  // portrait
+  if(h.portrait)showPortraitPreview(h.portrait);
+  // logo
+  if(h.logo_img)showLogoPreview(h.logo_img);
+  // mission
+  s('mission_label',m.label);s('mission_headline',m.headline);s('mission_p1',m.p1);s('mission_p2',m.p2);s('mission_quote',m.quote);s('mission_quote_attr',m.quote_attr);
+  s('mv1_title',m.mv1_title);s('mv1_sub',m.mv1_sub);s('mv2_title',m.mv2_title);s('mv2_sub',m.mv2_sub);s('mv3_title',m.mv3_title);s('mv3_sub',m.mv3_sub);s('mv4_title',m.mv4_title);s('mv4_sub',m.mv4_sub);
+  s('ms_stat1',m.stat1);s('ms_stat1_label',m.stat1_label);s('ms_stat2',m.stat2);s('ms_stat2_label',m.stat2_label);s('ms_stat3',m.stat3);s('ms_stat3_label',m.stat3_label);
+  // what cards
+  if(w[0]){s('wc1_title',w[0].title);s('wc1_body',w[0].body);}
+  if(w[1]){s('wc2_title',w[1].title);s('wc2_body',w[1].body);}
+  if(w[2]){s('wc3_title',w[2].title);s('wc3_body',w[2].body);}
+  // speaking
+  s('speaking_headline',sp.headline);s('speaking_intro',sp.intro);s('speaking_cta_headline',sp.cta_headline);s('speaking_cta_body',sp.cta_body);s('speaking_topics',sp.topics);
+  // buttons
+  s('nav_cta',h.nav_cta);s('cta_primary',h.cta_primary);s('cta_secondary',h.cta_secondary);
+  s('speaking_cta_btn',sp.cta_btn);s('groupe_cta',g2.cta);s('form_msg_label',cs.form_msg_label);s('form_submit_btn',cs.form_submit_btn);
+  s('tracker_headline',tr.headline);s('social_headline',ss.headline);s('contact_headline',cs.headline);s('contact_intro',cs.intro);
+  // impact
+  s('impact_label',imp.label);s('impact_headline',imp.headline);s('impact_intro',imp.intro);
+  // ventures
+  s('ventures_headline',v.headline);s('ventures_subtitle',v.subtitle);
+  // groupe
+  s('groupe_headline',g2.headline);s('groupe_p1',g2.p1);s('groupe_p2',g2.p2);s('groupe_industries',g2.industries);
+  // gallery
+  const gal=D.gallery||{};s('gallery_label',gal.label);s('gallery_headline',gal.headline);s('gallery_intro',gal.intro);
+  // social
+  s('social_linkedin',so.linkedin);s('social_instagram',so.instagram);s('social_facebook',so.facebook);s('social_twitter',so.twitter);s('social_youtube',so.youtube);s('social_whatsapp',so.whatsapp);
+  s('social_section_headline',ss.headline);s('social_section_intro',ss.intro);
+  // contact
+  s('contact_email',c.email);s('contact_phone',c.phone);s('contact_location',c.location);s('contact_services',c.services);
+  // footer
+  s('footer_tagline',f.tagline);s('footer_copy',f.copy);
+  s('tracker_desc',tr.desc);s('tracker_pulse',tr.pulse);
+  // seo
+  s('seo_title',se.title);s('seo_desc',se.desc);
+  updateSeoCount();
+}
+
+function collectFields(){
+  D.hero={...(D.hero||{}),name:g('hero_name'),eyebrow:g('hero_eyebrow'),sub:g('hero_sub'),role1:g('role1'),role2:g('role2'),role3:g('role3'),
+    stat1_num:g('stat1_num'),stat1_label:g('stat1_label'),stat2_num:g('stat2_num'),stat2_label:g('stat2_label'),stat3_num:g('stat3_num'),stat3_label:g('stat3_label'),
+    badge_num:g('badge_num'),badge_label:g('badge_label'),
+    nav_cta:g('nav_cta'),cta_primary:g('cta_primary'),cta_secondary:g('cta_secondary'),
+    portrait:D.hero&&D.hero.portrait?D.hero.portrait:'',
+    logo_img:D.hero&&D.hero.logo_img?D.hero.logo_img:''};
+  D.mission={...(D.mission||{}),label:g('mission_label'),headline:g('mission_headline'),p1:g('mission_p1'),p2:g('mission_p2'),quote:g('mission_quote'),quote_attr:g('mission_quote_attr'),
+    mv1_title:g('mv1_title'),mv1_sub:g('mv1_sub'),mv2_title:g('mv2_title'),mv2_sub:g('mv2_sub'),mv3_title:g('mv3_title'),mv3_sub:g('mv3_sub'),mv4_title:g('mv4_title'),mv4_sub:g('mv4_sub'),
+    stat1:g('ms_stat1'),stat1_label:g('ms_stat1_label'),stat2:g('ms_stat2'),stat2_label:g('ms_stat2_label'),stat3:g('ms_stat3'),stat3_label:g('ms_stat3_label')};
+  D.whatCards=[{title:g('wc1_title'),body:g('wc1_body')},{title:g('wc2_title'),body:g('wc2_body')},{title:g('wc3_title'),body:g('wc3_body')}];
+  D.speaking={...(D.speaking||{}),headline:g('speaking_headline'),intro:g('speaking_intro'),cta_headline:g('speaking_cta_headline'),cta_body:g('speaking_cta_body'),cta_btn:g('speaking_cta_btn'),topics:g('speaking_topics'),events:(D.speaking&&D.speaking.events)||[]};
+  D.impact={...(D.impact||{}),label:g('impact_label'),headline:g('impact_headline'),intro:g('impact_intro'),list:(D.impact&&D.impact.list)||[]};
+  D.ventures={...(D.ventures||{}),headline:g('ventures_headline'),subtitle:g('ventures_subtitle'),list:(D.ventures&&D.ventures.list)||[]};
+  D.groupe={headline:g('groupe_headline'),p1:g('groupe_p1'),p2:g('groupe_p2'),industries:g('groupe_industries'),cta:g('groupe_cta')};
+  D.gallery={...(D.gallery||{}),label:g('gallery_label'),headline:g('gallery_headline'),intro:g('gallery_intro'),items:(D.gallery&&D.gallery.items)||[]};
+  D.social={linkedin:g('social_linkedin'),instagram:g('social_instagram'),facebook:g('social_facebook'),twitter:g('social_twitter'),youtube:g('social_youtube'),whatsapp:g('social_whatsapp')};
+  D.social_section={headline:g('social_section_headline'),intro:g('social_section_intro')};
+  D.contact={email:g('contact_email'),phone:g('contact_phone'),location:g('contact_location'),services:g('contact_services')};
+  D.contact_section={headline:g('contact_headline'),intro:g('contact_intro'),form_msg_label:g('form_msg_label'),form_submit_btn:g('form_submit_btn')};
+  D.footer={tagline:g('footer_tagline'),copy:g('footer_copy')};
+  D.tracker={headline:g('tracker_headline'),desc:g('tracker_desc'),pulse:g('tracker_pulse')};
+  D.seo={title:g('seo_title'),desc:g('seo_desc')};
+}
+
+// ── PORTRAIT UPLOAD ──────────────────────────────────────────────────────────
+function uploadPortrait(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>5*1024*1024){toast('File too large — max 5MB','e');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    if(!D.hero)D.hero={};
+    D.hero.portrait=e.target.result;
+    showPortraitPreview(e.target.result);
+    markUnsaved();
+    document.getElementById('portraitUploadArea').style.display='none';
+  };
+  r.readAsDataURL(file);
+}
+function showPortraitPreview(src){
+  const area=document.getElementById('portraitPreview');
+  area.innerHTML=`<div class="img-preview"><img src="${src}" alt="Portrait preview" /><button class="img-preview-rm" onclick="removePortrait()" title="Remove portrait">&times;</button></div>`;
+  const ua=document.getElementById('portraitUploadArea');
+  if(ua)ua.style.display='none';
+}
+
+function uploadLogo(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>3*1024*1024){toast('File too large — max 3MB','e');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    if(!D.hero)D.hero={};
+    D.hero.logo_img=e.target.result;
+    showLogoPreview(e.target.result);
+    applyAdminLogo(e.target.result);
+    markUnsaved();
+    document.getElementById('logoUploadArea').style.display='none';
+  };
+  r.readAsDataURL(file);
+}
+function showLogoPreview(src){
+  const area=document.getElementById('logoPreview');
+  if(!area)return;
+  area.innerHTML=`<div class="img-preview" style="margin-bottom:.6rem;text-align:center"><img src="${src}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);display:inline-block" /><button class="img-preview-rm" style="position:static;display:block;margin:.4rem auto 0;width:auto;height:auto;border-radius:2px;padding:.2rem .5rem;font-size:.65rem;background:var(--red)" onclick="removeLogo()">Remove</button></div>`;
+  const ua=document.getElementById('logoUploadArea');
+  if(ua)ua.style.display='none';
+  applyAdminLogo(src);
+}
+function applyAdminLogo(src){
+  const el=document.getElementById('adminLogoMark');
+  if(!el)return;
+  if(src){el.innerHTML='<img src="'+src+'" alt="Logo" />';el.style.border='none';}
+  else{el.innerHTML='NB';el.style.border='';}
+}
+window.removeLogo=function(){
+  if(!D.hero)D.hero={};
+  D.hero.logo_img='';
+  document.getElementById('logoPreview').innerHTML='';
+  const ua=document.getElementById('logoUploadArea');
+  if(ua)ua.style.display='flex';
+  applyAdminLogo('');
+  markUnsaved();
+};
+window.removePortrait=function(){
+  if(!D.hero)D.hero={};
+  D.hero.portrait='';
+  document.getElementById('portraitPreview').innerHTML='';
+  const ua=document.getElementById('portraitUploadArea');
+  if(ua)ua.style.display='flex';
+  markUnsaved();
+};
+
+// ── GALLERY UPLOAD ───────────────────────────────────────────────────────────
+function uploadGalleryPhotos(input){
+  const files=Array.from(input.files); if(!files.length) return;
+  let count=0;
+  files.forEach(file=>{
+    if(file.size>5*1024*1024){toast('Skipped '+file.name+' — max 5MB','e');return;}
+    const r=new FileReader();
+    r.onload=e=>{
+      if(!D.gallery)D.gallery={items:[]};
+      if(!D.gallery.items)D.gallery.items=[];
+      const newItem={id:Date.now()+Math.random(),src:e.target.result,caption:file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' '),category:'Speaking'};
+      D.gallery.items.push(newItem);
+      count++;
+      renderGalleryGrid();
+      // open caption editor for each
+      setTimeout(()=>openGalCap(D.gallery.items.length-1),200*count);
+      markUnsaved();
+    };
+    r.readAsDataURL(file);
+  });
+  input.value='';
+}
+function renderGalleryGrid(){
+  const el=document.getElementById('galGrid'); if(!el) return;
+  const items=(D.gallery&&D.gallery.items)||[];
+  const thumbs=items.map((item,i)=>`<div class="gal-thumb"><img src="${item.src}" alt="${esc(item.caption)}" /><div class="gal-thumb-overlay"><span class="gal-thumb-cat">${esc(item.category)}</span><span class="gal-thumb-cap">${esc(item.caption)}</span><button class="gal-thumb-rm" onclick="removeGalItem(${i})">Remove</button><button class="btn" style="background:var(--gold);color:#000;font-size:.6rem;padding:.15rem .4rem;margin-top:.2rem" onclick="openGalCap(${i})">Edit</button></div></div>`).join('');
+  el.innerHTML=thumbs+`<button class="gal-add-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Add Photos<input type="file" accept="image/*" multiple onchange="uploadGalleryPhotos(this)" /></button>`;
+}
+window.removeGalItem=function(i){
+  if(!confirm('Remove this photo?'))return;
+  D.gallery.items.splice(i,1);
+  renderGalleryGrid();
+  markUnsaved();
+};
+window.openGalCap=function(i){
+  const item=D.gallery&&D.gallery.items&&D.gallery.items[i]; if(!item) return;
+  s('gc-idx',i);
+  document.getElementById('gc-thumb').src=item.src;
+  s('gc-cap',item.caption);
+  document.getElementById('gc-cat').value=item.category||'Speaking';
+  openMo('gal-cap');
+};
+window.saveGalCap=function(){
+  const i=parseInt(g('gc-idx'));
+  if(isNaN(i)||!D.gallery||!D.gallery.items[i])return;
+  D.gallery.items[i].caption=g('gc-cap');
+  D.gallery.items[i].category=document.getElementById('gc-cat').value;
+  renderGalleryGrid();
+  closeMo('gal-cap');
+  markUnsaved();
+};
+
+// ── MODAL IMAGE UPLOAD ───────────────────────────────────────────────────────
+window.uploadModalImg=function(input,previewId,dataId){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>5*1024*1024){toast('File too large','e');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    document.getElementById(previewId).innerHTML=`<div class="img-preview" style="margin-bottom:.6rem"><img src="${e.target.result}" style="max-height:120px;object-fit:cover;width:100%" /><button class="img-preview-rm" onclick="document.getElementById('${previewId}').innerHTML='';document.getElementById('${dataId}').value='';">&times;</button></div>`;
+    document.getElementById(dataId).value=e.target.result;
+  };
+  r.readAsDataURL(file);
+};
+
+// ── RENDER LISTS ─────────────────────────────────────────────────────────────
+function renderAll(){
+  renderSpeakingList();
+  renderImpactList();
+  renderVenturesList();
+  renderBlogList();
+  renderGalleryGrid();
+}
+
+function renderSpeakingList(){
+  const el=document.getElementById('speakingList'); if(!el) return;
+  const evs=(D.speaking&&D.speaking.events)||[];
+  if(!evs.length){el.innerHTML='<p style="font-size:.76rem;color:var(--muted);padding:.5rem 0">No events yet.</p>';return;}
+  el.innerHTML=evs.map((e,i)=>`<div class="ir"><div class="ir-l"><div class="ir-t">${esc(e.title)}</div><div class="ir-m">${esc(e.organiser)} · ${esc(e.location)} · ${esc(e.date)}</div></div><div class="ir-a"><span class="badge b-${e.status}">${e.status}</span><button class="btn bo btn-sm" onclick="editSpeaking(${i})">Edit</button><button class="btn bd btn-sm" onclick="delSpeaking(${i})">Del</button></div></div>`).join('');
+}
+function renderImpactList(){
+  const el=document.getElementById('impactList'); if(!el) return;
+  const list=(D.impact&&D.impact.list)||[];
+  if(!list.length){el.innerHTML='<p style="font-size:.76rem;color:var(--muted);padding:.5rem 0">No projects yet.</p>';return;}
+  el.innerHTML=list.map((p,i)=>`<div class="ir"><div class="ir-l"><div class="ir-t">${esc(p.title)}</div><div class="ir-m">${esc(p.label)} · ${esc(p.metric_num)} ${esc(p.metric_label)}</div></div><div class="ir-a"><button class="btn bo btn-sm" onclick="editImpact(${i})">Edit</button><button class="btn bd btn-sm" onclick="delImpact(${i})">Del</button></div></div>`).join('');
+}
+function renderVenturesList(){
+  const el=document.getElementById('venturesList'); if(!el) return;
+  const list=(D.ventures&&D.ventures.list)||[];
+  if(!list.length){el.innerHTML='<p style="font-size:.76rem;color:var(--muted);padding:.5rem 0">No ventures yet.</p>';return;}
+  el.innerHTML=list.map((v,i)=>`<div class="ir"><div class="ir-l"><div class="ir-t">${esc(v.name)}</div><div class="pr" style="margin-top:.4rem"><div class="pr-bar"><div class="pr-fill" style="width:${v.progress}%"></div></div><span class="pr-num">${v.progress}%</span></div></div><div class="ir-a"><span class="badge b-${v.status}">${v.status}</span><button class="btn bo btn-sm" onclick="editVenture(${i})">Edit</button><button class="btn bd btn-sm" onclick="delVenture(${i})">Del</button></div></div>`).join('');
+}
+function renderBlogList(){
+  const el=document.getElementById('blogList'); if(!el) return;
+  const list=(D.blog&&D.blog.list)||[];
+  if(!list.length){el.innerHTML='<p style="font-size:.76rem;color:var(--muted);padding:.5rem 0">No posts yet.</p>';return;}
+  el.innerHTML=list.map((b,i)=>`<div class="ir"><div class="ir-l"><div class="ir-t">${esc(b.title)}</div><div class="ir-m">${esc(b.category)} · ${esc(b.date)}</div></div><div class="ir-a">${b.featured==='true'?'<span class="badge" style="color:var(--blue);border-color:var(--blue)">Featured</span>':''}<button class="btn bo btn-sm" onclick="editBlog(${i})">Edit</button><button class="btn bd btn-sm" onclick="delBlog(${i})">Del</button></div></div>`).join('');
+}
+
+// ── SPEAKING CRUD ─────────────────────────────────────────────────────────────
+function openMo(t){document.getElementById('mo-'+t).classList.add('open');}
+function closeMo(t){document.getElementById('mo-'+t).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function clearSe(){s('se-id','');s('se-title','');s('se-org','');s('se-topic','');s('se-date','');s('se-loc','');document.getElementById('se-status').value='past';document.getElementById('se-img-preview').innerHTML='';s('se-img-data','');document.getElementById('se-mt').textContent='Add Speaking Event';}
+window.saveSpeaking=function(){
+  const title=g('se-title');if(!title){toast('Enter an event title','e');return;}
+  const id=g('se-id');
+  const item={title,organiser:g('se-org'),topic:g('se-topic'),date:g('se-date'),location:g('se-loc'),status:document.getElementById('se-status').value,image:g('se-img-data')};
+  if(!D.speaking)D.speaking={events:[]};
+  if(!D.speaking.events)D.speaking.events=[];
+  if(id!==''){D.speaking.events[parseInt(id)]={...D.speaking.events[parseInt(id)],...item};}else{D.speaking.events.push(item);}
+  closeMo('speaking');clearSe();renderSpeakingList();markUnsaved();toast('Event saved','s');
+};
+window.editSpeaking=function(i){const e=D.speaking.events[i];if(!e)return;s('se-id',i);s('se-title',e.title);s('se-org',e.organiser);s('se-topic',e.topic);s('se-date',e.date);s('se-loc',e.location);document.getElementById('se-status').value=e.status;if(e.image){document.getElementById('se-img-preview').innerHTML=`<div class="img-preview" style="margin-bottom:.6rem"><img src="${e.image}" style="max-height:100px;width:100%;object-fit:cover"/><button class="img-preview-rm" onclick="document.getElementById('se-img-preview').innerHTML='';document.getElementById('se-img-data').value=''">&times;</button></div>`;s('se-img-data',e.image);}document.getElementById('se-mt').textContent='Edit Speaking Event';openMo('speaking');};
+window.delSpeaking=function(i){if(!confirm('Delete?'))return;D.speaking.events.splice(i,1);renderSpeakingList();markUnsaved();};
+
+// ── IMPACT CRUD ───────────────────────────────────────────────────────────────
+function clearIm(){s('im-id','');s('im-title','');s('im-label','');s('im-desc','');s('im-mnum','');s('im-mlbl','');s('im-link','');document.getElementById('im-img-preview').innerHTML='';s('im-img-data','');document.getElementById('im-mt').textContent='Add Impact Project';}
+window.saveImpact=function(){
+  const title=g('im-title');if(!title){toast('Enter project name','e');return;}
+  const id=g('im-id');
+  const item={title,label:g('im-label'),desc:g('im-desc'),metric_num:g('im-mnum'),metric_label:g('im-mlbl'),link:g('im-link')||'Learn More',image:g('im-img-data')};
+  if(!D.impact)D.impact={list:[]};
+  if(!D.impact.list)D.impact.list=[];
+  if(id!==''){D.impact.list[parseInt(id)]={...D.impact.list[parseInt(id)],...item};}else{D.impact.list.push(item);}
+  closeMo('impact');clearIm();renderImpactList();markUnsaved();toast('Project saved','s');
+};
+window.editImpact=function(i){const p=D.impact.list[i];if(!p)return;s('im-id',i);s('im-title',p.title);s('im-label',p.label);s('im-desc',p.desc);s('im-mnum',p.metric_num);s('im-mlbl',p.metric_label);s('im-link',p.link);if(p.image){document.getElementById('im-img-preview').innerHTML=`<div class="img-preview" style="margin-bottom:.6rem"><img src="${p.image}" style="max-height:100px;width:100%;object-fit:cover"/><button class="img-preview-rm" onclick="document.getElementById('im-img-preview').innerHTML='';document.getElementById('im-img-data').value=''">&times;</button></div>`;s('im-img-data',p.image);}document.getElementById('im-mt').textContent='Edit Impact Project';openMo('impact');};
+window.delImpact=function(i){if(!confirm('Delete?'))return;D.impact.list.splice(i,1);renderImpactList();markUnsaved();};
+
+// ── VENTURE CRUD ──────────────────────────────────────────────────────────────
+document.getElementById('v-progress').addEventListener('input',function(){document.getElementById('v-pct-show').textContent=this.value;document.getElementById('v-pr-fill').style.width=this.value+'%';document.getElementById('v-pr-num').textContent=this.value+'%';});
+function clearV(){s('v-id','');s('v-name','');s('v-desc','');s('v-launch','');document.getElementById('v-status').value='building';document.getElementById('v-progress').value=50;document.getElementById('v-pct-show').textContent='50';document.getElementById('v-pr-fill').style.width='50%';document.getElementById('v-pr-num').textContent='50%';document.getElementById('v-mt').textContent='Add Venture';}
+window.saveVenture=function(){
+  const name=g('v-name');if(!name){toast('Enter venture name','e');return;}
+  const id=g('v-id'),pct=parseInt(document.getElementById('v-progress').value);
+  const item={name,status:document.getElementById('v-status').value,desc:g('v-desc'),progress:pct,launch:g('v-launch')};
+  if(!D.ventures)D.ventures={list:[]};
+  if(!D.ventures.list)D.ventures.list=[];
+  if(id!==''){D.ventures.list[parseInt(id)]={...D.ventures.list[parseInt(id)],...item};}else{D.ventures.list.push(item);}
+  closeMo('venture');clearV();renderVenturesList();markUnsaved();toast('Venture saved','s');
+};
+window.editVenture=function(i){const v=D.ventures.list[i];if(!v)return;s('v-id',i);s('v-name',v.name);s('v-desc',v.desc);s('v-launch',v.launch);document.getElementById('v-status').value=v.status;document.getElementById('v-progress').value=v.progress;document.getElementById('v-pct-show').textContent=v.progress;document.getElementById('v-pr-fill').style.width=v.progress+'%';document.getElementById('v-pr-num').textContent=v.progress+'%';document.getElementById('v-mt').textContent='Edit Venture';openMo('venture');};
+window.delVenture=function(i){if(!confirm('Delete?'))return;D.ventures.list.splice(i,1);renderVenturesList();markUnsaved();};
+
+// ── BLOG CRUD ─────────────────────────────────────────────────────────────────
+function clearBl(){s('bl-id','');s('bl-title','');s('bl-excerpt','');s('bl-body','');s('bl-date',new Date().toISOString().slice(0,10));document.getElementById('bl-cat').value='Entrepreneurship';document.getElementById('bl-featured').value='false';document.getElementById('bl-mt').textContent='Add Blog Post';}
+window.saveBlog=function(){
+  const title=g('bl-title');if(!title){toast('Enter post title','e');return;}
+  const id=g('bl-id');
+  const item={title,category:document.getElementById('bl-cat').value,date:g('bl-date'),excerpt:g('bl-excerpt'),body:g('bl-body'),featured:document.getElementById('bl-featured').value};
+  if(!D.blog)D.blog={list:[]};
+  if(!D.blog.list)D.blog.list=[];
+  if(id!==''){D.blog.list[parseInt(id)]={...D.blog.list[parseInt(id)],...item};}else{D.blog.list.push(item);}
+  closeMo('blog');clearBl();renderBlogList();markUnsaved();toast('Post saved','s');
+};
+window.editBlog=function(i){const b=D.blog.list[i];if(!b)return;s('bl-id',i);s('bl-title',b.title);s('bl-excerpt',b.excerpt);s('bl-body',b.body);s('bl-date',b.date);document.getElementById('bl-cat').value=b.category;document.getElementById('bl-featured').value=b.featured;document.getElementById('bl-mt').textContent='Edit Blog Post';openMo('blog');};
+window.delBlog=function(i){if(!confirm('Delete?'))return;D.blog.list.splice(i,1);renderBlogList();markUnsaved();};
+
+// ── SEO CHAR COUNT ────────────────────────────────────────────────────────────
+function updateSeoCount(){const el=document.getElementById('seo_desc');if(!el)return;const l=el.value.length;const c=document.getElementById('seoDescCount');if(c)c.textContent=l+' / 160 characters';el.style.borderColor=l>160?'var(--red)':'';};
+document.getElementById('seo_desc').addEventListener('input',updateSeoCount);
+
+// ── EXPORT ───────────────────────────────────────────────────────────────────
+function updatePreview(){collectFields();const el=document.getElementById('jsonPreview');if(el)el.value=JSON.stringify(D,null,2);}
+function exportJSON(){collectFields();const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nanaboateng-content.json';a.click();toast('JSON exported','s');}
+function copyJSON(){collectFields();navigator.clipboard.writeText(JSON.stringify(D,null,2)).then(()=>toast('Copied to clipboard','s')).catch(()=>toast('Copy failed — try Export','e'));}
+function importJSON(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);localStorage.setItem(SK,JSON.stringify(D));fillFields();renderAll();markSaved();toast('Content imported','s');}catch{toast('Invalid JSON file','e');}};r.readAsText(f);};i.click();}
+
+// ── AUTO-SAVE ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('input,textarea,select').forEach(el=>{el.addEventListener('input',markUnsaved);el.addEventListener('change',markUnsaved);});
+
+// ── RESET ─────────────────────────────────────────────────────────────────────
+function resetPanel(){if(!confirm('Reset to last saved version?'))return;fillFields();renderAll();markSaved();}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg,t='s'){const w=document.getElementById('tw');const el=document.createElement('div');el.className='toast '+t;el.textContent=msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
+
+// ── ESC ───────────────────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));});
+
+load();
+</script>
+</body>
+</html>
