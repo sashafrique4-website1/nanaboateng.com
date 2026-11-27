@@ -1220,14 +1220,16 @@ ul, ol { list-style: none; }
   border-top: 1px solid var(--border);
 }
 .testimonial-card__avatar {
-  width: 40px;
-  height: 40px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--stone);
   flex-shrink: 0;
   overflow: hidden;
 }
-.testimonial-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.testimonial-card__avatar { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.testimonial-card__avatar span { font-size: 15px; font-weight: 700; color: var(--gold, #B8963E); letter-spacing: .02em; }
+.testimonial-card__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .testimonial-card__name {
   font-family: var(--display);
   font-size: 13px;
@@ -4044,6 +4046,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function reviewPhotoUrl(t) {
+    var u = String(t.photo || t.image || t.avatar || t.picture || t.img || '').trim();
+    if (!/^https?:\/\//i.test(u)) return '';
+    var m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+    if (m) u = 'https://lh3.googleusercontent.com/d/' + m[1];
+    return u;
+  }
+  function reviewAvatar(t) {
+    var name = String(t.name || '').trim();
+    var initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(function(w) { return w.charAt(0).toUpperCase(); }).join('') || '★';
+    var url = reviewPhotoUrl(t);
+    var img = url ? '<img src="' + escHtml(url) + '" alt="' + escHtml(name || 'Reviewer') + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+    return '<div class="testimonial-card__avatar"><span aria-hidden="true">' + escHtml(initials) + '</span>' + img + '</div>';
+  }
+
   function applyTestimonials(items) {
     if (!items || !items.length) return;
     const grid = document.querySelector('.testimonials__grid');
@@ -4059,7 +4076,7 @@ document.addEventListener('DOMContentLoaded', () => {
         + '<div class="testimonial-card__quote" aria-hidden="true">"</div>'
         + '<p class="testimonial-card__body">' + escHtml(t.quote || '') + '</p>'
         + '<div class="testimonial-card__author">'
-        + '<div class="testimonial-card__avatar" aria-hidden="true"></div>'
+        + reviewAvatar(t)
         + '<div>'
         + '<div class="testimonial-card__name">' + escHtml(t.name || 'Anonymous') + '</div>'
         + '<div class="testimonial-card__role">' + escHtml(t.role || 'Google Review · ' + starStr) + '</div>'
