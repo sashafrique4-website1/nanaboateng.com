@@ -4065,6 +4065,9 @@ document.addEventListener('DOMContentLoaded', () => {
         + '<div class="testimonial-card__role">' + escHtml(t.role || 'Google Review · ' + starStr) + '</div>'
         + '</div></div></div>';
     }).join('');
+    grid.querySelectorAll('.reveal').forEach(function(el) {
+      if (typeof io !== 'undefined') io.observe(el); else el.classList.add('visible');
+    });
   }
 
   function applyEvents(items) {
